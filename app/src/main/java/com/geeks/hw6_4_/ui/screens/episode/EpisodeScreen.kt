@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.geeks.hw6_4_.R
+import com.example.rickandmortycompose.R
 import com.geeks.hw6_4_.ui.activity.CustomCircularProgressBar
 import com.geeks.hw6_4_.ui.activity.CustomLinearProgressBar
 import org.koin.androidx.compose.koinViewModel

@@ -36,8 +36,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import coil.compose.AsyncImage
+import com.example.rickandmortycompose.R
 import com.geeks.hw6_4_.ui.screens.character.CharacterScreen
-import com.geeks.hw6_4_.R
 import com.geeks.hw6_4_.ui.screens.Screens
 import com.geeks.hw6_4_.ui.screens.character.detail.DetailCharacterScreen
 import com.geeks.hw6_4_.ui.screens.episode.EpisodeScreen

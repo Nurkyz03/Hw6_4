@@ -29,6 +29,10 @@ import coil.compose.AsyncImage
 import com.example.rickandmortycompose.R
 import kotlinx.coroutines.Dispatchers
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.RowScopeInstance.align
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun DetailCharacterScreen(
@@ -36,11 +40,15 @@ fun DetailCharacterScreen(
     id: Int
 ) {
     val character by viewModel.singleCharacterStateFlow.collectAsState()
+
     LaunchedEffect(Dispatchers.IO) {
         viewModel.getSingleCharacter(id)
     }
+
     if (character == null) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(
+            modifier = Modifier.align(Alignment.Center)
+        )
     } else {
         character?.let {
             SingleCharacter(
@@ -54,7 +62,6 @@ fun DetailCharacterScreen(
         }
     }
 }
-
 
 @Composable
 fun SingleCharacter(
@@ -76,54 +83,93 @@ fun SingleCharacter(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AsyncImage(
-            modifier = Modifier
-                .size(200.dp)
-                .padding(4.dp)
-                .clip(shape = RoundedCornerShape(4.dp))
-                .border(
-                    border = BorderStroke(1.dp, color = Color.White),
-                    shape = RoundedCornerShape(2.dp)
-                ),
-            model = image,
-            contentDescription = "image of character"
+        AnimatedVisibility(
+            enter = fadeIn(animationSpec = tween(600)),
+            exit = fadeOut(animationSpec = tween(300))
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .size(200.dp)
+                    .padding(4.dp)
+                    .clip(shape = RoundedCornerShape(4.dp))
+                    .border(
+                        border = BorderStroke(1.dp, color = Color.White),
+                        shape = RoundedCornerShape(2.dp)
+                    ),
+                model = image,
+                contentDescription = "Image of character"
+            )
+        }
 
-        )
-        Text(
-            modifier = Modifier.padding(top = 12.dp, bottom = 2.dp),
-            text = name,
-            fontSize = 28.sp,
-            color = Color.White,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = species,
-            fontSize = 20.sp,
-            color = Color.Yellow,
-            fontWeight = FontWeight.SemiBold
-        )
-        Text(
-            modifier = Modifier.padding(8.dp),
-            text = gender,
-            color = if (gender == "Female") colorResource(R.color.purple_200) else Color.Blue,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold
-        )
-        Text(
-            text = "Status: $status",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.W400,
-            color = if (status == "Alive") Color.Green else Color.Red
-        )
+        AnimatedVisibility(
+            visible = true,
+            enter = fadeIn(animationSpec = tween(600)),
+            exit = fadeOut(animationSpec = tween(300))
+        ) {
+            Text(
+                modifier = Modifier.padding(top = 12.dp, bottom = 2.dp),
+                text = name,
+                fontSize = 28.sp,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        AnimatedVisibility(
+            visible = true,
+            enter = fadeIn(animationSpec = tween(800)),
+            exit = fadeOut(animationSpec = tween(300))
+        ) {
+            Text(
+                text = species,
+                fontSize = 20.sp,
+                color = Color.Yellow,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+
+        AnimatedVisibility(
+            visible = true,
+            enter = fadeIn(animationSpec = tween(1000)),
+            exit = fadeOut(animationSpec = tween(300))
+        ) {
+            Text(
+                modifier = Modifier.padding(8.dp),
+                text = gender,
+                color = if (gender == "Female") colorResource(R.color.purple_200) else Color.Blue,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+
+        AnimatedVisibility(
+            visible = true,
+            enter = fadeIn(animationSpec = tween(1200)),
+            exit = fadeOut(animationSpec = tween(300))
+        ) {
+            Text(
+                text = "Status: $status",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.W400,
+                color = if (status == "Alive") Color.Green else Color.Red
+            )
+        }
+
         Spacer(Modifier.size(8.dp))
-        Text(
-            modifier = Modifier
-                .padding(horizontal = 16.dp),
-            text = "Location: $location",
-            fontSize = 16.sp,
-            fontStyle = FontStyle.Italic,
-            color = Color.Magenta
-        )
 
+        AnimatedVisibility(
+            visible = true,
+            enter = fadeIn(animationSpec = tween(1400)),
+            exit = fadeOut(animationSpec = tween(300))
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp),
+                text = "Location: $location",
+                fontSize = 16.sp,
+                fontStyle = FontStyle.Italic,
+                color = Color.Magenta
+            )
+        }
     }
 }

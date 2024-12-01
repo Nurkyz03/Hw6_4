@@ -1,20 +1,17 @@
 package com.geeks.hw6_4_.ui.screens.character
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,6 +52,8 @@ fun CharacterScreen(
                 )
             }
         }
+
+        // Показываем индикатор загрузки при добавлении новых данных
         if (state.append is LoadState.Loading) {
             item {
                 Box(
@@ -68,6 +67,8 @@ fun CharacterScreen(
             }
         }
     }
+
+    // Показываем прогресс-бар при первой загрузке данных
     if (state.refresh is LoadState.Loading && characters.itemCount == 0) {
         Box(
             modifier = Modifier
@@ -79,7 +80,6 @@ fun CharacterScreen(
     }
 }
 
-
 @Composable
 fun CharacterItem(
     photo: String,
@@ -88,65 +88,61 @@ fun CharacterItem(
     location: String,
     onItemClick: () -> Unit
 ) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .clip(
-            shape = RoundedCornerShape(4.dp)
-        )
-        .padding(top = 12.dp, start = 8.dp, end = 8.dp)
-        .background(
-            color = colorResource(R.color.purple_200),
-            shape = RoundedCornerShape(4.dp)
-        )
-        .border(
-            border = BorderStroke(
-                4.dp,
-                color = Color.Green
-            ),
-            shape = RoundedCornerShape(4.dp)
-        )
-        .clickable { onItemClick() }
+    // Анимация появления каждого элемента
+    AnimatedVisibility(
+        visible = true,
+        enter = slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(600)),
+        exit = fadeOut(animationSpec = tween(300))
     ) {
-        AsyncImage(
+        Row(
             modifier = Modifier
-                .size(86.dp)
-                .padding(top = 8.dp, start = 12.dp)
-                .clip(shape = RoundedCornerShape(4.dp))
-                .border(
-                    border = BorderStroke(1.dp, color = Color.White),
-                    shape = RoundedCornerShape(2.dp)
-                ),
-            model = photo,
-            contentDescription = "image of character"
-        )
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxWidth()
+                .padding(8.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(color = colorResource(R.color.purple_200))
+                .border(BorderStroke(2.dp, Color.Green), shape = RoundedCornerShape(8.dp))
+                .clickable { onItemClick() }
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                modifier = Modifier.padding(top = 12.dp, bottom = 2.dp),
-                text = name,
-                textAlign = TextAlign.Center,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
+            // Изображение персонажа
+            AsyncImage(
+                model = photo,
+                contentDescription = "Image of character",
+                modifier = Modifier
+                    .size(86.dp)
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(50))
+                    .border(2.dp, Color.White, RoundedCornerShape(50))
+            )
 
-            )
-            Text(
-                text = gender,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = if (gender == "Female") Color.Magenta else Color.Blue
-            )
-            Text(
-                modifier = Modifier.padding(bottom = 8.dp),
-                text = location,
-                textAlign = TextAlign.Center,
-                fontSize = 16.sp,
-                fontStyle = FontStyle.Italic,
-                fontWeight = FontWeight.W500,
-                color = Color.DarkGray
-            )
+            // Информация о персонаже
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = name,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = gender,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (gender == "Female") Color.Magenta else Color.Blue
+                )
+                Text(
+                    text = location,
+                    fontSize = 16.sp,
+                    fontStyle = FontStyle.Italic,
+                    fontWeight = FontWeight.W500,
+                    color = Color.DarkGray,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }

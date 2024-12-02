@@ -1,4 +1,4 @@
-package com.geeks.hw6_4_
+package com.geeks.hw6_4_.ui.application
 
 import android.app.Application
 import com.geeks.hw6_4_.data.dataModule

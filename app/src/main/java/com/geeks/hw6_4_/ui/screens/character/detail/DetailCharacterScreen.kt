@@ -3,12 +3,7 @@ package com.geeks.hw6_4_.ui.screens.character.detail
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -31,8 +26,34 @@ import kotlinx.coroutines.Dispatchers
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.RowScopeInstance.align
+import androidx.compose.foundation.layout.FlowColumnScopeInstance.align
 import androidx.compose.ui.tooling.preview.Preview
+
+fun Modifier.characterImageStyle(): Modifier = this
+    .size(200.dp)
+    .padding(4.dp)
+    .clip(RoundedCornerShape(4.dp))
+    .border(BorderStroke(1.dp, Color.White), RoundedCornerShape(2.dp))
+
+fun Modifier.characterTextStyle(): Modifier = this
+    .padding(top = 12.dp, bottom = 2.dp)
+
+@Composable
+fun AnimatedText(text: String, fontSize: Int, color: Color, modifier: Modifier = Modifier) {
+    AnimatedVisibility(
+        visible = true,
+        enter = fadeIn(animationSpec = tween(600)),
+        exit = fadeOut(animationSpec = tween(300))
+    ) {
+        Text(
+            text = text,
+            fontSize = fontSize.sp,
+            color = color,
+            modifier = modifier,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
 
 @Composable
 fun DetailCharacterScreen(
@@ -76,10 +97,7 @@ fun SingleCharacter(
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
-            .background(
-                color = colorResource(R.color.purple_700),
-                shape = RoundedCornerShape(12.dp)
-            ),
+            .background(color = colorResource(R.color.purple_700), shape = RoundedCornerShape(12.dp)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -88,88 +106,61 @@ fun SingleCharacter(
             exit = fadeOut(animationSpec = tween(300))
         ) {
             AsyncImage(
-                modifier = Modifier
-                    .size(200.dp)
-                    .padding(4.dp)
-                    .clip(shape = RoundedCornerShape(4.dp))
-                    .border(
-                        border = BorderStroke(1.dp, color = Color.White),
-                        shape = RoundedCornerShape(2.dp)
-                    ),
+                modifier = Modifier.characterImageStyle(),
                 model = image,
                 contentDescription = "Image of character"
             )
         }
 
-        AnimatedVisibility(
-            visible = true,
-            enter = fadeIn(animationSpec = tween(600)),
-            exit = fadeOut(animationSpec = tween(300))
-        ) {
-            Text(
-                modifier = Modifier.padding(top = 12.dp, bottom = 2.dp),
-                text = name,
-                fontSize = 28.sp,
-                color = Color.White,
-                fontWeight = FontWeight.Bold
-            )
-        }
+        AnimatedText(
+            text = name,
+            fontSize = 28,
+            color = Color.White,
+            modifier = Modifier.characterTextStyle()
+        )
 
-        AnimatedVisibility(
-            visible = true,
-            enter = fadeIn(animationSpec = tween(800)),
-            exit = fadeOut(animationSpec = tween(300))
-        ) {
-            Text(
-                text = species,
-                fontSize = 20.sp,
-                color = Color.Yellow,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
+        AnimatedText(
+            text = species,
+            fontSize = 20,
+            color = Color.Yellow,
+            modifier = Modifier.characterTextStyle()
+        )
 
-        AnimatedVisibility(
-            visible = true,
-            enter = fadeIn(animationSpec = tween(1000)),
-            exit = fadeOut(animationSpec = tween(300))
-        ) {
-            Text(
-                modifier = Modifier.padding(8.dp),
-                text = gender,
-                color = if (gender == "Female") colorResource(R.color.purple_200) else Color.Blue,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
+        AnimatedText(
+            text = gender,
+            fontSize = 16,
+            color = if (gender == "Female") colorResource(R.color.purple_200) else Color.Blue,
+            modifier = Modifier.characterTextStyle()
+        )
 
-        AnimatedVisibility(
-            visible = true,
-            enter = fadeIn(animationSpec = tween(1200)),
-            exit = fadeOut(animationSpec = tween(300))
-        ) {
-            Text(
-                text = "Status: $status",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W400,
-                color = if (status == "Alive") Color.Green else Color.Red
-            )
-        }
+        AnimatedText(
+            text = "Status: $status",
+            fontSize = 16,
+            color = if (status == "Alive") Color.Green else Color.Red,
+            modifier = Modifier.characterTextStyle()
+        )
 
         Spacer(Modifier.size(8.dp))
 
-        AnimatedVisibility(
-            visible = true,
-            enter = fadeIn(animationSpec = tween(1400)),
-            exit = fadeOut(animationSpec = tween(300))
-        ) {
-            Text(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp),
-                text = "Location: $location",
-                fontSize = 16.sp,
-                fontStyle = FontStyle.Italic,
-                color = Color.Magenta
-            )
-        }
+        AnimatedText(
+            text = "Location: $location",
+            fontSize = 16,
+            color = Color.Magenta,
+            modifier = Modifier.characterTextStyle().padding(horizontal = 16.dp),
+            fontStyle = FontStyle.Italic
+        )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewDetailCharacterScreen() {
+    SingleCharacter(
+        gender = "Male",
+        name = "Rick Sanchez",
+        species = "Human",
+        image = "https://rickandmortyapi.com/api/character/avatar/1.jpeg",
+        status = "Alive",
+        location = "Earth"
+    )
 }

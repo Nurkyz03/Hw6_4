@@ -28,6 +28,40 @@ import com.geeks.hw6_4_.ui.activity.CustomCircularProgressBar
 import com.geeks.hw6_4_.ui.activity.CustomLinearProgressBar
 import org.koin.androidx.compose.koinViewModel
 
+fun Modifier.episodeItemStyle(): Modifier = this
+    .fillMaxWidth()
+    .height(120.dp)
+    .clip(RoundedCornerShape(4.dp))
+    .padding(top = 12.dp, start = 8.dp, end = 8.dp)
+    .background(
+        color = colorResource(R.color.purple_200),
+        shape = RoundedCornerShape(4.dp)
+    )
+    .border(BorderStroke(4.dp, Color.Green), shape = RoundedCornerShape(4.dp))
+
+fun Modifier.episodeTextStyle(fontSize: Int, weight: FontWeight = FontWeight.Normal, color: Color = Color.Black): Modifier = this
+    .fontSize(fontSize.sp)
+    .fontWeight(weight)
+    .padding(horizontal = 12.dp)
+    .then(Modifier.align(Alignment.CenterVertically)) // Ensure text is centered vertically
+
+@Composable
+fun AnimatedText(text: String, fontSize: Int, weight: FontWeight = FontWeight.Normal, color: Color = Color.Black) {
+    AnimatedVisibility(
+        visible = true,
+        enter = fadeIn(animationSpec = tween(600)),
+        exit = fadeOut(animationSpec = tween(300))
+    ) {
+        Text(
+            text = text,
+            fontSize = fontSize.sp,
+            color = color,
+            fontWeight = weight,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
 @Composable
 fun EpisodeScreen(
     viewModel: EpisodeViewModel = koinViewModel(),
@@ -36,7 +70,10 @@ fun EpisodeScreen(
     val episodes = viewModel.episodePagingFlow.collectAsLazyPagingItems()
     val state = episodes.loadState
 
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier.padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         items(episodes.itemCount) { index ->
             episodes[index]?.let { item ->
                 EpisodeItem(
@@ -89,41 +126,29 @@ private fun EpisodeItem(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .padding(top = 12.dp, start = 8.dp, end = 8.dp)
-                .background(color = colorResource(R.color.purple_200), shape = RoundedCornerShape(4.dp))
-                .border(BorderStroke(4.dp, Color.Green), shape = RoundedCornerShape(4.dp))
+                .episodeItemStyle()
                 .clickable { onItemClick() },
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Основной контент: текстовый номер эпизода
-            Text(
-                modifier = Modifier.padding(horizontal = 12.dp),
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
+            AnimatedText(
                 text = episode,
-                color = Color.Black
+                fontSize = 32,
+                weight = FontWeight.Bold
             )
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    modifier = Modifier.padding(top = 12.dp, bottom = 2.dp),
+                AnimatedText(
                     text = name,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    color = Color.Black
+                    fontSize = 20,
+                    weight = FontWeight.Bold
                 )
-                Text(
-                    modifier = Modifier.padding(bottom = 12.dp, top = 8.dp),
+                AnimatedText(
                     text = airDate,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W300,
+                    fontSize = 16,
+                    weight = FontWeight.W300,
                     color = Color.Gray
                 )
             }

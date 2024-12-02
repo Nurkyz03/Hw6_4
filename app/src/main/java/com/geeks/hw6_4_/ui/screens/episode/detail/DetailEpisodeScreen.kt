@@ -29,6 +29,42 @@ import com.geeks.hw6_4_.ui.activity.CustomLinearProgressBar
 import com.geeks.hw6_4_.ui.screens.episode.EpisodeViewModel
 import org.koin.androidx.compose.koinViewModel
 
+fun Modifier.episodeItemContainerStyle(): Modifier = this
+    .fillMaxWidth()
+    .height(120.dp)
+    .clip(RoundedCornerShape(4.dp))
+    .padding(top = 12.dp, start = 8.dp, end = 8.dp)
+    .background(
+        color = colorResource(R.color.purple_200),
+        shape = RoundedCornerShape(4.dp)
+    )
+    .border(
+        border = BorderStroke(4.dp, color = Color.Green),
+        shape = RoundedCornerShape(4.dp)
+    )
+
+fun Modifier.episodeTextStyle(fontSize: Int, weight: FontWeight = FontWeight.Normal): Modifier = this
+    .fontSize(fontSize.sp)
+    .fontWeight(weight)
+    .padding(horizontal = 12.dp)
+
+@Composable
+fun AnimatedText(text: String, fontSize: Int, weight: FontWeight = FontWeight.Normal, color: Color = Color.Black) {
+    AnimatedVisibility(
+        visible = true,
+        enter = fadeIn(animationSpec = tween(600)),
+        exit = fadeOut(animationSpec = tween(300))
+    ) {
+        Text(
+            text = text,
+            fontSize = fontSize.sp,
+            color = color,
+            fontWeight = weight,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
 @Composable
 fun EpisodeScreen(
     viewModel: EpisodeViewModel = koinViewModel(),
@@ -93,43 +129,29 @@ private fun EpisodeItem(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .clip(shape = RoundedCornerShape(4.dp))
-                .padding(top = 12.dp, start = 8.dp, end = 8.dp)
-                .background(
-                    color = colorResource(R.color.purple_200),
-                    shape = RoundedCornerShape(4.dp)
-                )
-                .border(
-                    border = BorderStroke(4.dp, color = Color.Green),
-                    shape = RoundedCornerShape(4.dp)
-                )
+                .episodeItemContainerStyle()
                 .clickable { onItemClick() },
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                modifier = Modifier.padding(horizontal = 12.dp),
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
+            AnimatedText(
                 text = episode,
+                fontSize = 32,
+                weight = FontWeight.Bold
             )
+
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    modifier = Modifier.padding(top = 12.dp, bottom = 2.dp),
+                AnimatedText(
                     text = name,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
+                    fontSize = 20,
+                    weight = FontWeight.Bold
                 )
-                Text(
-                    modifier = Modifier.padding(bottom = 12.dp, top = 8.dp),
+                AnimatedText(
                     text = airDate,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.W300
+                    fontSize = 16,
+                    weight = FontWeight.W300
                 )
             }
         }

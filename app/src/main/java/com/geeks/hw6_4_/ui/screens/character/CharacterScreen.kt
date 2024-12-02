@@ -26,9 +26,44 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.rickandmortycompose.R
-import com.geeks.hw6_4_.ui.activity.CustomCircularProgressBar
-import com.geeks.hw6_4_.ui.activity.CustomLinearProgressBar
 import org.koin.androidx.compose.koinViewModel
+
+fun Modifier.characterItemContainerStyle(): Modifier = this
+    .fillMaxWidth()
+    .padding(8.dp)
+    .clip(RoundedCornerShape(8.dp))
+    .background(color = colorResource(R.color.purple_200))
+    .border(BorderStroke(2.dp, Color.Green), shape = RoundedCornerShape(8.dp))
+    .padding(8.dp)
+
+fun Modifier.characterImageStyle(): Modifier = this
+    .size(86.dp)
+    .padding(8.dp)
+    .clip(RoundedCornerShape(50))
+    .border(2.dp, Color.White, RoundedCornerShape(50))
+
+fun Modifier.characterTextStyle(fontSize: Int, color: Color, weight: FontWeight): Modifier = this
+    .fontSize(fontSize.sp)
+    .fontWeight(weight)
+    .color(color)
+    .padding(4.dp)
+
+@Composable
+fun AnimatedText(text: String, fontSize: Int, color: Color, weight: FontWeight = FontWeight.Normal) {
+    AnimatedVisibility(
+        visible = true,
+        enter = fadeIn(animationSpec = tween(600)),
+        exit = fadeOut(animationSpec = tween(300))
+    ) {
+        Text(
+            text = text,
+            fontSize = fontSize.sp,
+            color = color,
+            fontWeight = weight,
+            textAlign = TextAlign.Center
+        )
+    }
+}
 
 @Composable
 fun CharacterScreen(
@@ -53,7 +88,6 @@ fun CharacterScreen(
             }
         }
 
-        // Показываем индикатор загрузки при добавлении новых данных
         if (state.append is LoadState.Loading) {
             item {
                 Box(
@@ -68,7 +102,6 @@ fun CharacterScreen(
         }
     }
 
-    // Показываем прогресс-бар при первой загрузке данных
     if (state.refresh is LoadState.Loading && characters.itemCount == 0) {
         Box(
             modifier = Modifier
@@ -88,7 +121,6 @@ fun CharacterItem(
     location: String,
     onItemClick: () -> Unit
 ) {
-    // Анимация появления каждого элемента
     AnimatedVisibility(
         visible = true,
         enter = slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(600)),
@@ -96,51 +128,39 @@ fun CharacterItem(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(color = colorResource(R.color.purple_200))
-                .border(BorderStroke(2.dp, Color.Green), shape = RoundedCornerShape(8.dp))
-                .clickable { onItemClick() }
-                .padding(8.dp),
+                .characterItemContainerStyle()
+                .clickable { onItemClick() },
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Изображение персонажа
             AsyncImage(
                 model = photo,
                 contentDescription = "Image of character",
-                modifier = Modifier
-                    .size(86.dp)
-                    .padding(8.dp)
-                    .clip(RoundedCornerShape(50))
-                    .border(2.dp, Color.White, RoundedCornerShape(50))
+                modifier = Modifier.characterImageStyle()
             )
 
-            // Информация о персонаже
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
+                AnimatedText(
                     text = name,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = 20,
                     color = Color.Black,
-                    textAlign = TextAlign.Center
+                    weight = FontWeight.Bold
                 )
-                Text(
+
+                AnimatedText(
                     text = gender,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = if (gender == "Female") Color.Magenta else Color.Blue
+                    fontSize = 12,
+                    color = if (gender == "Female") Color.Magenta else Color.Blue,
+                    weight = FontWeight.SemiBold
                 )
-                Text(
+
+                AnimatedText(
                     text = location,
-                    fontSize = 16.sp,
-                    fontStyle = FontStyle.Italic,
-                    fontWeight = FontWeight.W500,
+                    fontSize = 16,
                     color = Color.DarkGray,
-                    textAlign = TextAlign.Center
+                    weight = FontWeight.W500
                 )
             }
         }
